@@ -38,7 +38,7 @@ requirements = [
     'scikit-learn'
 ]
 
-exec(open('gqcnn/version.py').read())
+exec(open('gqcnn/version.py', encoding="utf-8").read())
 
 setup(name='gqcnn', 
       version=__version__, 
