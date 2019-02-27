@@ -36,6 +36,7 @@ import tensorflow as tf
 
 from autolab_core import YamlConfig
 from . import InputDataMode, TrainingMode
+from functools import reduce
 
 
 def reduce_shape(shape):
@@ -375,7 +376,7 @@ class GQCNN(object):
         layer_channels = conv2_2_num_filt
 
         use_conv3 = False
-        if 'conv3_1' in cfg.keys():
+        if 'conv3_1' in list(cfg.keys()):
             use_conv3 = True
 
         if use_conv3:
@@ -554,7 +555,7 @@ class GQCNN(object):
         # load architecture
         self._architecture = config['architecture']
         self._use_conv3 = False
-        if 'conv3_1' in self._architecture.keys():
+        if 'conv3_1' in list(self._architecture.keys()):
             self._use_conv3 = True
         self._use_pc2 = False
         if self._architecture['pc2']['out_size'] > 0:

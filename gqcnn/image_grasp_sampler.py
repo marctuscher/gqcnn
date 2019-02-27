@@ -63,7 +63,7 @@ def force_closure(p1, p2, n1, n2, mu):
     return (in_cone_1 and in_cone_2)
 
 
-class ImageGraspSampler(object):
+class ImageGraspSampler(object, metaclass=ABCMeta):
     """
     Wraps image to crane grasp candidate generation for easy deployment of GQ-CNN.
 
@@ -74,7 +74,6 @@ class ImageGraspSampler(object):
     gripper_width : float
         width of the gripper in 3D space
     """
-    __metaclass__ = ABCMeta
 
     def __init__(self, config, gripper_width=np.inf):
         # set params

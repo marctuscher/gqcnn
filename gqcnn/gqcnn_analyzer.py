@@ -23,7 +23,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 Class for analyzing a GQCNN model for grasp quality prediction
 Author: Jeff Mahler
 """
-import cPickle as pkl
+import pickle as pkl
 import copy
 import json
 import logging
@@ -92,7 +92,7 @@ class GQCNNAnalyzer(object):
 
         self.train_class_results = {}
         self.val_class_results = {}
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             logging.info('Analyzing model %s' % (model_name))
 
             # read in model config
@@ -254,8 +254,8 @@ class GQCNNAnalyzer(object):
                 else:
                     pose_arr = (pose_arr - pose_mean) / pose_std
 
-                    if 'use_hog' in model_config.keys(
-                    ) and model_config['use_hog']:
+                    if 'use_hog' in list(model_config.keys(
+                    )) and model_config['use_hog']:
                         feature_arr = None
                         for i in range(num_datapoints):
                             image = image_arr[i, :, :, 0]
@@ -299,12 +299,12 @@ class GQCNNAnalyzer(object):
                 # break into training / val
                 index_im_filename = im_filename
                 new_train_indices = {}
-                for key in train_indices.keys():
+                for key in list(train_indices.keys()):
                     new_train_indices[os.path.join(model_training_dataset_dir,
                                                    key)] = train_indices[key]
                 train_indices = new_train_indices
                 new_val_indices = {}
-                for key in val_indices.keys():
+                for key in list(val_indices.keys()):
                     new_val_indices[os.path.join(model_training_dataset_dir,
                                                  key)] = val_indices[key]
                 val_indices = new_val_indices
@@ -346,7 +346,7 @@ class GQCNNAnalyzer(object):
         # get stats, plot curves
         plt.clf()
         i = 0
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             model_tag = self.models[model_name]['tag']
             train_class_result = self.train_class_results[model_tag]
             logging.info('Model %s training error rate: %.3f' %
@@ -361,7 +361,7 @@ class GQCNNAnalyzer(object):
         plt.savefig(figname, dpi=self.dpi)
         plt.clf()
         i = 0
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             model_tag = self.models[model_name]['tag']
             train_class_result = self.train_class_results[model_tag]
             train_class_result.roc_curve(
@@ -375,7 +375,7 @@ class GQCNNAnalyzer(object):
 
         plt.clf()
         i = 0
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             model_tag = self.models[model_name]['tag']
             val_class_result = self.val_class_results[model_tag]
             logging.info('Model %s validation error rate: %.3f' %
@@ -391,7 +391,7 @@ class GQCNNAnalyzer(object):
 
         plt.clf()
         i = 0
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             model_tag = self.models[model_name]['tag']
             val_class_result = self.val_class_results[model_tag]
             val_class_result.roc_curve(
@@ -406,7 +406,7 @@ class GQCNNAnalyzer(object):
         # combined training and validation precision-recall curves plot
         plt.clf()
         i = 0
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             model_tag = self.models[model_name]['tag']
             train_class_result = self.train_class_results[model_tag]
             if model_tag is None:
@@ -422,7 +422,7 @@ class GQCNNAnalyzer(object):
                     style=styles[i],
                     label='Training' + model_tag)
             i += 1
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             model_tag = self.models[model_name]['tag']
             val_class_result = self.val_class_results[model_tag]
             if model_tag is None:
@@ -448,7 +448,7 @@ class GQCNNAnalyzer(object):
         # combined training and validation roc curves plot
         plt.clf()
         i = 0
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             model_tag = self.models[model_name]['tag']
             train_class_result = self.train_class_results[model_tag]
             if model_tag is None:
@@ -464,7 +464,7 @@ class GQCNNAnalyzer(object):
                     style=styles[i],
                     label='Training' + model_tag)
             i += 1
-        for model_name in self.models.keys():
+        for model_name in list(self.models.keys()):
             model_tag = self.models[model_name]['tag']
             val_class_result = self.val_class_results[model_tag]
             if model_tag is None:

@@ -33,7 +33,7 @@ import logging
 import matplotlib.pyplot as plt
 import numbers
 import numpy as np
-import cPickle as pkl
+import pickle as pkl
 import os
 import random
 import scipy.misc as sm
@@ -47,7 +47,7 @@ import shutil
 import tensorflow as tf
 import threading
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import yaml
 
 from autolab_core import YamlConfig
@@ -136,7 +136,7 @@ class SGDOptimizer(object):
             self.sess.close()
 
             # cleanup
-            for layer_weights in self.weights.__dict__.values():
+            for layer_weights in list(self.weights.__dict__.values()):
                 del layer_weights
             del self.saver
             del self.sess
@@ -164,10 +164,10 @@ class SGDOptimizer(object):
 
         # read and setup dropouts from config
         drop_fc3 = False
-        if 'drop_fc3' in self.cfg.keys() and self.cfg['drop_fc3']:
+        if 'drop_fc3' in list(self.cfg.keys()) and self.cfg['drop_fc3']:
             drop_fc3 = True
         drop_fc4 = False
-        if 'drop_fc4' in self.cfg.keys() and self.cfg['drop_fc4']:
+        if 'drop_fc4' in list(self.cfg.keys()) and self.cfg['drop_fc4']:
             drop_fc4 = True
 
         fc3_drop_rate = self.cfg['fc3_drop_rate']
@@ -195,7 +195,7 @@ class SGDOptimizer(object):
                 loss = self._create_loss()
 
         # part 2: regularization
-        layer_weights = self.weights.__dict__.values()
+        layer_weights = list(self.weights.__dict__.values())
         with tf.name_scope('regularization'):
             regularizers = tf.nn.l2_loss(layer_weights[0])
             for w in layer_weights[1:]:
@@ -212,16 +212,16 @@ class SGDOptimizer(object):
             staircase=True)
 
         # setup variable list
-        var_list = self.weights.__dict__.values()
+        var_list = list(self.weights.__dict__.values())
         if self.cfg['fine_tune'] and self.cfg['update_fc_only']:
             var_list = [
-                v for k, v in self.weights.__dict__.iteritems()
+                v for k, v in self.weights.__dict__.items()
                 if k.find('conv') == -1
             ]
         elif self.cfg['fine_tune'] and self.cfg[
                 'update_conv0_only'] and self.use_conv0:
             var_list = [
-                v for k, v in self.weights.__dict__.iteritems()
+                v for k, v in self.weights.__dict__.items()
                 if k.find('conv0') > -1
             ]
 
@@ -253,7 +253,7 @@ class SGDOptimizer(object):
             logging.info('Cleaning and Preparing to Exit Optimization')
 
             # cleanup
-            for layer_weights in self.weights.__dict__.values():
+            for layer_weights in list(self.weights.__dict__.values()):
                 del layer_weights
             del self.saver
             del self.sess
@@ -284,7 +284,7 @@ class SGDOptimizer(object):
             self.train_stats_logger = TrainStatsLogger(self.experiment_dir)
 
             # loop through training steps
-            training_range = xrange(
+            training_range = range(
                 int(self.num_epochs * self.num_train) // self.train_batch_size)
             for step in training_range:
                 # check for dead queue
@@ -425,7 +425,7 @@ class SGDOptimizer(object):
             self.term_event.set()
             if not self.forceful_exit:
                 self.sess.close()
-                for layer_weights in self.weights.__dict__.values():
+                for layer_weights in list(self.weights.__dict__.values()):
                     del layer_weights
                 del self.saver
                 del self.sess
@@ -452,7 +452,7 @@ class SGDOptimizer(object):
         self.sess.close()
 
         # cleanup
-        for layer_weights in self.weights.__dict__.values():
+        for layer_weights in list(self.weights.__dict__.values()):
             del layer_weights
         del self.saver
         del self.sess
@@ -575,7 +575,7 @@ class SGDOptimizer(object):
             # this assumes that a gqcnn was passed in that was initialized with weights from a model using GQCNN.load(), so all that has to
             # be done is to possibly reinitialize fc3/fc4/fc5
             reinit_pc1 = False
-            if 'reinit_pc1' in self.cfg.keys():
+            if 'reinit_pc1' in list(self.cfg.keys()):
                 reinit_pc1 = self.cfg['reinit_pc1']
             self.gqcnn.reinitialize_layers(
                 self.cfg['reinit_fc3'],
@@ -755,7 +755,7 @@ class SGDOptimizer(object):
         """ Compute train and validation indices based on an image-wise split"""
         # make a map of the train and test indices for each file
         logging.info('Computing indices image-wise')
-        if 'splits' in self.cfg.keys():
+        if 'splits' in list(self.cfg.keys()):
             train_index_map_filename = self.cfg['splits']['training']
             val_index_map_filename = self.cfg['splits']['validation']
         else:
@@ -796,7 +796,7 @@ class SGDOptimizer(object):
         """ Compute train and validation indices based on an object-wise split"""
         # make a map of the train and test indices for each file
         logging.info('Computing indices object-wise')
-        if 'splits' in self.cfg.keys():
+        if 'splits' in list(self.cfg.keys()):
             train_index_map_filename = self.cfg['splits']['training']
             val_index_map_filename = self.cfg['splits']['validation']
         else:
@@ -868,7 +868,7 @@ class SGDOptimizer(object):
         """ Compute train and validation indices based on an image-stable-pose-wise split"""
         # make a map of the train and test indices for each file
         logging.info('Computing indices stable-pose-wise')
-        if 'splits' in self.cfg.keys():
+        if 'splits' in list(self.cfg.keys()):
             train_index_map_filename = self.cfg['splits']['training']
             val_index_map_filename = self.cfg['splits']['validation']
         else:
@@ -1095,15 +1095,15 @@ class SGDOptimizer(object):
             self.stable_pose_filenames.sort(key=lambda x: int(x[-9:-4]))
 
             # pack, shuffle and sample
-            zipped = zip(self.im_filenames, self.pose_filenames,
+            zipped = list(zip(self.im_filenames, self.pose_filenames,
                          self.label_filenames, self.obj_id_filenames,
-                         self.stable_pose_filenames)
+                         self.stable_pose_filenames))
             random.shuffle(zipped)
             zipped = zipped[:self.debug_num_files]
 
             # unpack
-            self.im_filenames, self.pose_filenames, self.label_filenames, self.obj_id_filenames, self.stable_pose_filenames = zip(
-                *zipped)
+            self.im_filenames, self.pose_filenames, self.label_filenames, self.obj_id_filenames, self.stable_pose_filenames = list(zip(
+                *zipped))
             IPython.embed()
 
         self.im_filenames.sort(key=lambda x: int(x[-9:-4]))
@@ -1185,7 +1185,7 @@ class SGDOptimizer(object):
 
         out_config_filename = os.path.join(self.experiment_dir, 'config.json')
         tempOrderedDict = collections.OrderedDict()
-        for key in self.cfg.keys():
+        for key in list(self.cfg.keys()):
             tempOrderedDict[key] = self.cfg[key]
         with open(out_config_filename, 'w') as outfile:
             json.dump(tempOrderedDict, outfile)

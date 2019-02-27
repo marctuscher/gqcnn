@@ -25,7 +25,7 @@ Author: Jeff Mahler
 """
 from abc import ABCMeta, abstractmethod
 
-import cPickle as pkl
+import pickle as pkl
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
@@ -143,9 +143,8 @@ class ParallelJawGrasp(object):
         return ParallelJawGrasp(grasp, q_value, image)
 
 
-class Policy(object):
+class Policy(object, metaclass=ABCMeta):
     """ Abstract policy class. """
-    __metaclass__ = ABCMeta
 
     def __call__(self, state):
         return self.action(state)
@@ -186,7 +185,7 @@ class GraspingPolicy(Policy):
         self._sampling_config = config['sampling']
         self._gqcnn_model_dir = config['gqcnn_model']
         self._logging_dir = None
-        if 'logging_dir' in config.keys():
+        if 'logging_dir' in list(config.keys()):
             self._logging_dir = config['logging_dir']
             self._policy_dir = self._logging_dir
             if not os.path.exists(self._logging_dir):
@@ -348,7 +347,7 @@ class AntipodalGraspingPolicy(GraspingPolicy):
         """ Parses the parameters of the policy. """
         self._num_grasp_samples = self.config['sampling']['num_grasp_samples']
         self._gripper_width = np.inf
-        if 'gripper_width' in self.config.keys():
+        if 'gripper_width' in list(self.config.keys()):
             self._gripper_width = self.config['gripper_width']
 
     def select(self, grasps, q_value):
@@ -357,7 +356,7 @@ class AntipodalGraspingPolicy(GraspingPolicy):
         """
         # sort
         num_grasps = len(grasps)
-        grasps_and_predictions = zip(np.arange(num_grasps), q_value)
+        grasps_and_predictions = list(zip(np.arange(num_grasps), q_value))
         grasps_and_predictions.sort(key=lambda x: x[1], reverse=True)
         return grasps_and_predictions[0][0]
 
@@ -440,7 +439,7 @@ class AntipodalGraspingPolicy(GraspingPolicy):
             scaled_camera_intr = camera_intr.resize(scale_factor)
 
             # sort grasps
-            q_values_and_indices = zip(q_values, np.arange(num_grasps))
+            q_values_and_indices = list(zip(q_values, np.arange(num_grasps)))
             q_values_and_indices.sort(key=lambda x: x[0], reverse=True)
 
             vis.figure(size=(FIGSIZE, FIGSIZE))
@@ -545,7 +544,7 @@ class CrossEntropyAntipodalGraspingPolicy(GraspingPolicy):
         if self.config['deterministic']:
             self._seed = SEED
         self._gripper_width = np.inf
-        if 'gripper_width' in self.config.keys():
+        if 'gripper_width' in list(self.config.keys()):
             self._gripper_width = self.config['gripper_width']
 
     def select(self, grasps, q_value):
@@ -556,7 +555,7 @@ class CrossEntropyAntipodalGraspingPolicy(GraspingPolicy):
         num_grasps = len(grasps)
         if num_grasps == 0:
             raise ValueError('Zero grasps')
-        grasps_and_predictions = zip(np.arange(num_grasps), q_value)
+        grasps_and_predictions = list(zip(np.arange(num_grasps), q_value))
         grasps_and_predictions.sort(key=lambda x: x[1], reverse=True)
         return grasps_and_predictions[0][0]
 
@@ -644,7 +643,7 @@ class CrossEntropyAntipodalGraspingPolicy(GraspingPolicy):
                 'Prediction took %.3f sec' % (time() - predict_start))
 
             # sort grasps
-            q_values_and_indices = zip(q_values, np.arange(num_grasps))
+            q_values_and_indices = list(zip(q_values, np.arange(num_grasps)))
             q_values_and_indices.sort(key=lambda x: x[0], reverse=True)
 
             if self.config['vis']['grasp_candidates']:

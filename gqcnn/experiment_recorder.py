@@ -267,11 +267,11 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
         return self._cur_uid
 
     def update_trial_attribute(self, name, value, uid=None):
-        if name not in self.experiment_headers.keys():
+        if name not in list(self.experiment_headers.keys()):
             raise ValueError('Attribute %s not supported' % (name))
         if uid is None:
             uid = self._cur_uid
-        if isinstance(value, unicode):
+        if isinstance(value, str):
             value = str(value)
 
         if self.experiment_headers[name] == 'str' and not isinstance(
@@ -303,8 +303,8 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
     def record_trial(self, data_dict, uid=None):
         """ Record a full trial """
         # check valid headers
-        for name in data_dict.keys():
-            if name not in self.experiment_headers.keys():
+        for name in list(data_dict.keys()):
+            if name not in list(self.experiment_headers.keys()):
                 raise ValueError('Attribute %s not supported' % (name))
 
         # write each entry individually
@@ -325,7 +325,7 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
             # add all attributes of the current row to the tensor
             if not row['completed']:
                 continue
-            for name, value in row.iteritems():
+            for name, value in row.items():
                 # read raw data
                 data = None
                 if name == 'input_depth_im':
@@ -356,7 +356,7 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
             # write to file if necessary
             if num_recorded >= datapoints_per_file:
                 # save each tensor
-                for name, tensor in data_tensors.iteritems():
+                for name, tensor in data_tensors.items():
                     output_name = self.experiment_data_output_names[name]
                     if output_name is None:
                         output_name = name
@@ -366,7 +366,7 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
                     np.savez_compressed(filename, tensor)
 
                 # update for next round
-                for name in data_tensors.keys():
+                for name in list(data_tensors.keys()):
                     del data_tensors[name]
                     data_tensors[name] = None
                 file_num += 1
@@ -374,7 +374,7 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
 
         # save final tensor
         if num_recorded > 0:
-            for name, tensor in data_tensors.iteritems():
+            for name, tensor in data_tensors.items():
                 output_name = self.experiment_data_output_names[name]
                 if output_name is None:
                     output_name = name
