@@ -56,8 +56,8 @@ class ConfusionMatrix(object):
         """
         num_pred = predictions.shape[0]
         for i in range(num_pred):
-            self.matrix[labels[i].astype(np.uint16),
-                        predictions[i].astype(np.uint16)] += 1
+            self.matrix[labels[i].astype(np.uint16), predictions[i].
+                        astype(np.uint16)] += 1
 
 
 class ClassificationResult(object):
@@ -92,10 +92,8 @@ class ClassificationResult(object):
         : float
                 the error rate
         """
-        return 100.0 - (
-            100.0 *
-            np.sum(self.predictions == self.labels) /
-            self.num_datapoints)
+        return 100.0 - (100.0 * np.sum(self.predictions == self.labels) /
+                        self.num_datapoints)
 
     def top_k_error_rate(self, k):
         """ Get the top k error rates
@@ -115,10 +113,8 @@ class ClassificationResult(object):
         for i in range(k):
             labels_arr[:, i] = self.labels
 
-        return 100.0 - (
-            100.0 *
-            np.sum(predictions_arr == labels_arr) /
-            self.num_datapoints)
+        return 100.0 - (100.0 * np.sum(predictions_arr == labels_arr) /
+                        self.num_datapoints)
 
     @property
     def fpr(self):
@@ -131,8 +127,8 @@ class ClassificationResult(object):
         """
         if np.sum(self.labels == 0) == 0:
             return 0.0
-        return float(np.sum((self.predictions == 1) & (
-            self.labels == 0))) / np.sum(self.labels == 0)
+        return float(np.sum((self.predictions == 1) &
+                            (self.labels == 0))) / np.sum(self.labels == 0)
 
     @property
     def precision(self):
@@ -145,8 +141,9 @@ class ClassificationResult(object):
         """
         if np.sum(self.predictions == 1) == 0:
             return 1.0
-        return float(np.sum((self.predictions == 1) & (
-            self.labels == 1))) / np.sum(self.predictions == 1)
+        return float(
+            np.sum((self.predictions == 1) & (self.labels == 1))) / np.sum(
+                self.predictions == 1)
 
     @property
     def recall(self):
@@ -160,8 +157,8 @@ class ClassificationResult(object):
         if np.sum(self.predictions == 1) == 0:
             return 1.0
         try:
-            return float(np.sum((self.predictions == 1) & (
-                self.labels == 1))) / np.sum(self.labels == 1)
+            return float(np.sum((self.predictions == 1) &
+                                (self.labels == 1))) / np.sum(self.labels == 1)
         except ZeroDivisionError:
             return 0.0
 
@@ -294,15 +291,14 @@ class ClassificationResult(object):
         labels_vec = label_mat.ravel()
         return pred_probs_vec, labels_vec
 
-    def precision_recall_curve(
-            self,
-            plot=False,
-            line_width=2,
-            font_size=15,
-            color='b',
-            style='-',
-            label='',
-            marker=None):
+    def precision_recall_curve(self,
+                               plot=False,
+                               line_width=2,
+                               font_size=15,
+                               color='b',
+                               style='-',
+                               label='',
+                               marker=None):
         """ Generates precision recall curve for the predictions and labels in this ClassificationResult. Optionally plots the
         curve if the plot flag is on
 
@@ -348,14 +344,13 @@ class ClassificationResult(object):
             plt.ylabel('Precision', fontsize=font_size)
         return precision, recall, thresholds
 
-    def roc_curve(
-            self,
-            plot=False,
-            line_width=2,
-            font_size=15,
-            color='b',
-            style='-',
-            label=''):
+    def roc_curve(self,
+                  plot=False,
+                  line_width=2,
+                  font_size=15,
+                  color='b',
+                  style='-',
+                  label=''):
         """ Generates receiver operating characteristic curve for the predictions and labels in this ClassificationResult. Optionally plots
         the curve if the plot flag is on
 

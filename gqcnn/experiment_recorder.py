@@ -40,16 +40,19 @@ from autolab_core import CSVModel, ExperimentLogger, YamlConfig
 from autolab_core.utils import gen_experiment_id
 from perception import BinaryImage, DepthImage, Image
 
+
 class LoggerField(object):
     """ Encapsulates fields saved during experiments """
 
     # default values
-    default_values = {'str':'',
-                      'int':0,
-                      'float':0.0,
-                      'bool':False}                      
+    default_values = {'str': '', 'int': 0, 'float': 0.0, 'bool': False}
 
-    def __init__(self, name, data_type='', value=None, file_ext=None, output_filename_prefix=None):
+    def __init__(self,
+                 name,
+                 data_type='',
+                 value=None,
+                 file_ext=None,
+                 output_filename_prefix=None):
         self.name = name
         self.data_type = data_type
         self.value = value
@@ -61,23 +64,33 @@ class LoggerField(object):
             try:
                 self.value = LoggerField.default_values[self.data_type]
             except KeyError as e:
-                logging.error('Data type %s not supported. Please create an entry in the defaults file' %(LoggerField.default_values))
+                logging.error(
+                    'Data type %s not supported. Please create an entry in the defaults file'
+                    % (LoggerField.default_values))
                 raise e
 
-class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
 
-    def __init__(self, experiment_root_path, supervisor, camera_intr, T_camera_world, cfg_filename, planner_type='default'):
+class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
+    def __init__(self,
+                 experiment_root_path,
+                 supervisor,
+                 camera_intr,
+                 T_camera_world,
+                 cfg_filename,
+                 planner_type='default'):
         self.cfg = YamlConfig(cfg_filename)
         self.camera_intr = camera_intr
         self.T_camera_world = T_camera_world
         self.supervisor = supervisor
         self.planner_type = planner_type
-        
-        super(GraspIsolatedObjectExperimentLogger, self).__init__(experiment_root_path, experiment_tag=planner_type)
+
+        super(GraspIsolatedObjectExperimentLogger, self).__init__(
+            experiment_root_path, experiment_tag=planner_type)
 
         # open csv for data
         data_path = os.path.join(self.experiment_path, 'data.csv')
-        self._data_csv = CSVModel.get_or_create(data_path, self.experiment_headers)
+        self._data_csv = CSVModel.get_or_create(data_path,
+                                                self.experiment_headers)
         self._cur_uid = None
 
         # create raw data directory
@@ -88,12 +101,13 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
         dst_cfg_filename = os.path.join(self.experiment_path, 'config.yaml')
         shutil.copyfile(cfg_filename, dst_cfg_filename)
 
-        dst_intr_filename = os.path.join(self.experiment_path, '%s.intr' %(camera_intr.frame))
+        dst_intr_filename = os.path.join(self.experiment_path,
+                                         '%s.intr' % (camera_intr.frame))
         self.camera_intr.save(dst_intr_filename)
 
-        dst_reg_filename = os.path.join(self.experiment_path,
-                                        '%s_to_%s.tf' %(T_camera_world.from_frame,
-                                                        T_camera_world.to_frame))
+        dst_reg_filename = os.path.join(
+            self.experiment_path, '%s_to_%s.tf' % (T_camera_world.from_frame,
+                                                   T_camera_world.to_frame))
         T_camera_world.save(dst_reg_filename)
 
     @property
@@ -103,23 +117,23 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
     @property
     def compressed_data_path(self):
         return os.path.join(self.experiment_path, 'compressed')
-        
+
     @property
     def experiment_meta_headers(self):
         return {
-            'experiment_id':'str',
-            'use':'bool',
-            'time_started':'str',
-            'time_stopped':'str',
-            'duration':'float',
-            'planner_type':'str',
-            'supervisor':'str'
+            'experiment_id': 'str',
+            'use': 'bool',
+            'time_started': 'str',
+            'time_stopped': 'str',
+            'duration': 'float',
+            'planner_type': 'str',
+            'supervisor': 'str'
         }
 
     @property
     def experiment_meta_data(self):
         return {
-            'experiment_id': self.id, 
+            'experiment_id': self.id,
             'use': True,
             'planner_type': self.planner_type,
             'supervisor': self.supervisor
@@ -240,7 +254,7 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
             'found_grasp': None,
             'completed': None
         }
-        
+
     @property
     def cur_trial_data(self):
         if self._cur_uid is None:
@@ -254,19 +268,23 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
 
     def update_trial_attribute(self, name, value, uid=None):
         if name not in self.experiment_headers.keys():
-            raise ValueError('Attribute %s not supported' %(name))
+            raise ValueError('Attribute %s not supported' % (name))
         if uid is None:
             uid = self._cur_uid
         if isinstance(value, unicode):
             value = str(value)
 
-        if self.experiment_headers[name] == 'str' and not isinstance(value, str):
+        if self.experiment_headers[name] == 'str' and not isinstance(
+                value, str):
             # assume auto-save if the passed value was not a string
             file_ext = self.experiment_data_file_exts[name]
             if file_ext is None:
-                raise ValueError('Saving raw data for attribute %s is not supported' %(name))
-            filename = os.path.join(self.raw_data_path,
-                                    '%s_%d.%s' %(name, self._cur_uid, file_ext))
+                raise ValueError(
+                    'Saving raw data for attribute %s is not supported' %
+                    (name))
+            filename = os.path.join(
+                self.raw_data_path,
+                '%s_%d.%s' % (name, self._cur_uid, file_ext))
             if file_ext == 'npy' and not isinstance(value, Image):
                 np.save(filename, value)
             else:
@@ -275,7 +293,7 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
             # save the filename to the csv
             data = self.cur_trial_data
             data[name] = filename
-            self._data_csv.update_by_uid(uid, data)            
+            self._data_csv.update_by_uid(uid, data)
         else:
             # save all non-string data types to the CSV
             data = self.cur_trial_data
@@ -287,7 +305,7 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
         # check valid headers
         for name in data_dict.keys():
             if name not in self.experiment_headers.keys():
-                raise ValueError('Attribute %s not supported' %(name))
+                raise ValueError('Attribute %s not supported' % (name))
 
         # write each entry individually
         for name, value in data_dict:
@@ -312,13 +330,14 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
                 data = None
                 if name == 'input_depth_im':
                     if os.path.exists(value):
-                        data = DepthImage.open(value).raw_data[np.newaxis,...]
+                        data = DepthImage.open(value).raw_data[np.newaxis, ...]
                 elif name == 'input_binary_im':
                     if os.path.exists(value):
-                        data = BinaryImage.open(value).raw_data[np.newaxis,...]
+                        data = BinaryImage.open(
+                            value).raw_data[np.newaxis, ...]
                 elif name == 'input_pose':
                     if os.path.exists(value):
-                        data = np.load(value)[np.newaxis,...]
+                        data = np.load(value)[np.newaxis, ...]
                 elif name == 'lifted_object' or name == 'human_label' \
                      or name == 'gripper_width' or name == 'found_grasp' \
                      or name == 'gripper_torque':
@@ -341,9 +360,11 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
                     output_name = self.experiment_data_output_names[name]
                     if output_name is None:
                         output_name = name
-                    filename = os.path.join(self.compressed_data_path, '%s_%05d.npz' %(output_name, file_num))
+                    filename = os.path.join(
+                        self.compressed_data_path,
+                        '%s_%05d.npz' % (output_name, file_num))
                     np.savez_compressed(filename, tensor)
-                
+
                 # update for next round
                 for name in data_tensors.keys():
                     del data_tensors[name]
@@ -357,6 +378,7 @@ class GraspIsolatedObjectExperimentLogger(ExperimentLogger):
                 output_name = self.experiment_data_output_names[name]
                 if output_name is None:
                     output_name = name
-                filename = os.path.join(self.compressed_data_path, '%s_%05d.npz' %(output_name, file_num))
+                filename = os.path.join(
+                    self.compressed_data_path,
+                    '%s_%05d.npz' % (output_name, file_num))
                 np.savez_compressed(filename, tensor)
-

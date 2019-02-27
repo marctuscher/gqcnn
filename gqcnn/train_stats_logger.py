@@ -49,39 +49,25 @@ experiment_dir : str
     def log(self):
         """ Log all of the statistics to experiment directory """
         np.save(
-            os.path.join(
-                self.experiment_dir,
-                'train_eval_iters.npy'),
+            os.path.join(self.experiment_dir, 'train_eval_iters.npy'),
             self.train_eval_iters)
         np.save(
-            os.path.join(
-                self.experiment_dir,
-                'train_losses.npy'),
+            os.path.join(self.experiment_dir, 'train_losses.npy'),
             self.train_losses)
         np.save(
-            os.path.join(
-                self.experiment_dir,
-                'train_errors.npy'),
+            os.path.join(self.experiment_dir, 'train_errors.npy'),
             self.train_errors)
         np.save(
-            os.path.join(
-                self.experiment_dir,
-                'total_train_errors.npy'),
+            os.path.join(self.experiment_dir, 'total_train_errors.npy'),
             self.total_train_errors)
         np.save(
-            os.path.join(
-                self.experiment_dir,
-                'val_eval_iters.npy'),
+            os.path.join(self.experiment_dir, 'val_eval_iters.npy'),
             self.val_eval_iters)
         np.save(
-            os.path.join(
-                self.experiment_dir,
-                'val_errors.npy'),
+            os.path.join(self.experiment_dir, 'val_errors.npy'),
             self.val_errors)
         np.save(
-            os.path.join(
-                self.experiment_dir,
-                'learning_rates.npy'),
+            os.path.join(self.experiment_dir, 'learning_rates.npy'),
             self.learning_rates)
 
     def update(self, **stats):

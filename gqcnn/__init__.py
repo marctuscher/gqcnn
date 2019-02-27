@@ -35,16 +35,14 @@ from .image_grasp_sampler import ImageGraspSampler, AntipodalDepthImageGraspSamp
 from .policy import Policy, GraspingPolicy, AntipodalGraspingPolicy, CrossEntropyAntipodalGraspingPolicy, QFunctionAntipodalGraspingPolicy, EpsilonGreedyQFunctionAntipodalGraspingPolicy, RgbdImageState, ParallelJawGrasp
 from .gqcnn_prediction_visualizer import GQCNNPredictionVisualizer
 
-__all__ = ['GQCNN', 
-           'SGDOptimizer',
-           'GQCNNAnalyzer',
-           'ImageMode', 'TrainingMode', 'PreprocMode', 'InputDataMode',
-           'TrainStatsLogger',
-           'ClassificationResult', 'RegressionResult', 'ConfusionMatrix',
-           'Grasp2D',
-           'ImageGraspSampler', 'AntipodalDepthImageGraspSampler', 'ImageGraspSamplerFactory'
-           'Visualizer', 'RobotGripper',
-           'ParallelJawGrasp', 'Policy', 'GraspingPolicy', 'AntipodalGraspingPolicy', 'CrossEntropyAntipodalGraspingPolicy',
-           'RgbdImageState',
-           'NoValidGraspsException', 'NoAntipodalPairsFoundException',
-           'GQCNNPredictionVisualizer']
+__all__ = [
+    'GQCNN', 'SGDOptimizer', 'GQCNNAnalyzer', 'ImageMode', 'TrainingMode',
+    'PreprocMode', 'InputDataMode', 'TrainStatsLogger', 'ClassificationResult',
+    'RegressionResult', 'ConfusionMatrix', 'Grasp2D', 'ImageGraspSampler',
+    'AntipodalDepthImageGraspSampler', 'ImageGraspSamplerFactory'
+    'Visualizer', 'RobotGripper', 'ParallelJawGrasp', 'Policy',
+    'GraspingPolicy', 'AntipodalGraspingPolicy',
+    'CrossEntropyAntipodalGraspingPolicy', 'RgbdImageState',
+    'NoValidGraspsException', 'NoAntipodalPairsFoundException',
+    'GQCNNPredictionVisualizer'
+]

@@ -28,6 +28,7 @@ import numpy as np
 from autolab_core import Point, RigidTransform
 from perception import CameraIntrinsics
 
+
 class Grasp2D(object):
     """
     Parallel-jaw grasp in image space.
@@ -45,6 +46,7 @@ class Grasp2D(object):
     camera_intr : :obj:`perception.CameraIntrinsics`
         frame of reference for camera that the grasp corresponds to
     """
+
     def __init__(self, center, angle, depth, width=0.0, camera_intr=None):
         self.center = center
         self.angle = angle
@@ -52,15 +54,22 @@ class Grasp2D(object):
         self.width = width
         # if camera_intr is none use default primesense camera intrinsics
         if not camera_intr:
-            self.camera_intr = CameraIntrinsics('primesense_overhead', fx=525, fy=525, cx=319.5, cy=239.5, width=640, height=480)
-        else: 
+            self.camera_intr = CameraIntrinsics(
+                'primesense_overhead',
+                fx=525,
+                fy=525,
+                cx=319.5,
+                cy=239.5,
+                width=640,
+                height=480)
+        else:
             self.camera_intr = camera_intr
 
     @property
     def axis(self):
         """ Returns the grasp axis. """
-        return np.array([np.cos(self.angle), np.sin(self.angle)])        
-        
+        return np.array([np.cos(self.angle), np.sin(self.angle)])
+
     @property
     def frame(self):
         """ The name of the frame of reference for the grasp. """
@@ -72,11 +81,13 @@ class Grasp2D(object):
     def width_px(self):
         """ Returns the width in pixels. """
         if self.camera_intr is None:
-            raise ValueError('Must specify camera intrinsics to compute gripper width in 3D space')
+            raise ValueError(
+                'Must specify camera intrinsics to compute gripper width in 3D space'
+            )
         # form the jaw locations in 3D space at the given depth
         p1 = Point(np.array([0, 0, self.depth]), frame=self.frame)
         p2 = Point(np.array([self.width, 0, self.depth]), frame=self.frame)
-        
+
         # project into pixel space
         u1 = self.camera_intr.project(p1)
         u2 = self.camera_intr.project(p2)
@@ -126,7 +137,8 @@ class Grasp2D(object):
             angle = np.arccos(axis[0])
         else:
             angle = -np.arccos(axis[0])
-        return Grasp2D(center, angle, depth, width=width, camera_intr=camera_intr)
+        return Grasp2D(
+            center, angle, depth, width=width, camera_intr=camera_intr)
 
     def pose(self, grasp_approach_dir=None):
         """ Computes the 3D pose of the grasp relative to the camera.
@@ -145,35 +157,41 @@ class Grasp2D(object):
         """
         # check intrinsics
         if self.camera_intr is None:
-            raise ValueError('Must specify camera intrinsics to compute 3D grasp pose')
+            raise ValueError(
+                'Must specify camera intrinsics to compute 3D grasp pose')
 
         # compute 3D grasp center in camera basis
         grasp_center_im = self.center.data
         center_px_im = Point(grasp_center_im, frame=self.camera_intr.frame)
-        grasp_center_camera = self.camera_intr.deproject_pixel(self.depth, center_px_im)
+        grasp_center_camera = self.camera_intr.deproject_pixel(
+            self.depth, center_px_im)
         grasp_center_camera = grasp_center_camera.data
 
         # compute 3D grasp axis in camera basis
         grasp_axis_im = self.axis
         grasp_axis_im = grasp_axis_im / np.linalg.norm(grasp_axis_im)
         grasp_axis_camera = np.array([grasp_axis_im[0], grasp_axis_im[1], 0])
-        grasp_axis_camera = grasp_axis_camera / np.linalg.norm(grasp_axis_camera)
-        
+        grasp_axis_camera = grasp_axis_camera / np.linalg.norm(
+            grasp_axis_camera)
+
         # convert to 3D pose
-        grasp_rot_camera, _, _ = np.linalg.svd(grasp_axis_camera.reshape(3,1))
+        grasp_rot_camera, _, _ = np.linalg.svd(grasp_axis_camera.reshape(3, 1))
         grasp_x_camera = grasp_approach_dir
         if grasp_approach_dir is None:
-            grasp_x_camera = np.array([0,0,1]) # aligned with camera Z axis
+            grasp_x_camera = np.array([0, 0, 1])  # aligned with camera Z axis
         grasp_y_camera = grasp_axis_camera
         grasp_z_camera = np.cross(grasp_x_camera, grasp_y_camera)
         grasp_x_camera = np.cross(grasp_z_camera, grasp_y_camera)
-        grasp_rot_camera = np.array([grasp_x_camera, grasp_y_camera, grasp_z_camera]).T
-        if np.linalg.det(grasp_rot_camera) < 0: # fix possible reflections due to SVD
-            grasp_rot_camera[:,0] = -grasp_rot_camera[:,0]
-        T_grasp_camera = RigidTransform(rotation=grasp_rot_camera,
-                                        translation=grasp_center_camera,
-                                        from_frame='grasp',
-                                       to_frame=self.camera_intr.frame)
+        grasp_rot_camera = np.array(
+            [grasp_x_camera, grasp_y_camera, grasp_z_camera]).T
+        if np.linalg.det(
+                grasp_rot_camera) < 0:  # fix possible reflections due to SVD
+            grasp_rot_camera[:, 0] = -grasp_rot_camera[:, 0]
+        T_grasp_camera = RigidTransform(
+            rotation=grasp_rot_camera,
+            translation=grasp_center_camera,
+            from_frame='grasp',
+            to_frame=self.camera_intr.frame)
         return T_grasp_camera
 
     @staticmethod

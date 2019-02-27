@@ -25,10 +25,12 @@ Author: Vishal Satish
 """
 import tensorflow as tf
 
+
 # other constants
 class GeneralConstants:
     SEED = 95417238
     timeout_option = tf.RunOptions(timeout_in_ms=1000000)
+
 
 # enum for templates for file reading
 class ImageFileTemplates:
@@ -44,6 +46,7 @@ class ImageFileTemplates:
     object_labels_template = 'object_labels'
     pose_labels_template = 'pose_labels'
 
+
 # enum for image modalities
 class ImageMode:
     BINARY = 'binary'
@@ -54,15 +57,18 @@ class ImageMode:
     DEPTH_TF = 'depth_tf'
     DEPTH_TF_TABLE = 'depth_tf_table'
 
+
 # enum for training modes
 class TrainingMode:
     CLASSIFICATION = 'classification'
     REGRESSION = 'regression'
 
+
 # enum for preproc
 class PreprocMode:
     NORMALIZATION = 'normalized'
     NONE = 'none'
+
 
 # enum for input data formats
 class InputDataMode:
