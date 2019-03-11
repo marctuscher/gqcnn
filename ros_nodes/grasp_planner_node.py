@@ -180,7 +180,7 @@ if __name__ == '__main__':
     cv_bridge = CvBridge()
 
     # get configs
-    cfg = YamlConfig(rospy.get_param('~config'))
+    cfg = rospy.get_param('grasp_config')
     policy_cfg = cfg['policy']
 
     # create publisher to publish pose only of final grasp
