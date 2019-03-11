@@ -22,7 +22,7 @@ policy:
   gmm_reg_covar: 0.01
 
   # gqcnn params
-  gqcnn_model: /mnt/hdd/dex-net/data/models/grasp_quality/GQ-Image-Wise
+  gqcnn_model: /home/robo/develop/GQ
 
   # general params
   deterministic: 1
