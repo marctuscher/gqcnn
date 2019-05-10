@@ -36,8 +36,8 @@ from visualization import Visualizer2D as vis
 from gqcnn.grasping import Grasp2D, SuctionPoint2D
 from gqcnn.utils import NoValidGraspsException
 
-from enums import SamplingMethod
-from policy import GraspingPolicy, GraspAction
+from gqcnn.grasping.policy.enums import SamplingMethod
+from gqcnn.grasping.policy.policy import GraspingPolicy, GraspAction
 
 class FullyConvolutionalGraspingPolicy(GraspingPolicy):
     """Abstract grasp sampling policy class using Fully-Convolutional GQ-CNN network."""

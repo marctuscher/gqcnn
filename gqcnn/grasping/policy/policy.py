@@ -24,7 +24,7 @@ Grasping policies
 Author: Jeff Mahler
 """
 from abc import ABCMeta, abstractmethod
-import cPickle as pkl
+import pickle as pkl
 import math
 import os
 from time import time

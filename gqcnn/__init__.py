@@ -19,11 +19,11 @@ PURPOSE. THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
 HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE
 MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 """
-from model import get_gqcnn_model, get_fc_gqcnn_model 
-from training import get_gqcnn_trainer
-from grasping import RobustGraspingPolicy, UniformRandomGraspingPolicy, CrossEntropyRobustGraspingPolicy, RgbdImageState, FullyConvolutionalGraspingPolicyParallelJaw, FullyConvolutionalGraspingPolicySuction
-from analysis import GQCNNAnalyzer
-from search import GQCNNSearch
-from utils import NoValidGraspsException, NoAntipodalPairsFoundException
+from gqcnn.model import get_gqcnn_model, get_fc_gqcnn_model 
+from gqcnn.training import get_gqcnn_trainer
+from gqcnn.grasping import RobustGraspingPolicy, UniformRandomGraspingPolicy, CrossEntropyRobustGraspingPolicy, RgbdImageState, FullyConvolutionalGraspingPolicyParallelJaw, FullyConvolutionalGraspingPolicySuction
+from gqcnn.analysis import GQCNNAnalyzer
+from gqcnn.search import GQCNNSearch
+from gqcnn.utils import NoValidGraspsException, NoAntipodalPairsFoundException
 
 __all__ = ['get_gqcnn_model', 'get_fc_gqcnn_model', 'get_gqcnn_trainer', 'RobustGraspingPolicy', 'UniformRandomGraspingPolicy', 'CrossEntropyRobustGraspingPolicy', 'RgbdImageState','FullyConvolutionalGraspingPolicyParallelJaw', 'FullyConvolutionalGraspingPolicySuction', 'GQCNNAnalyzer', 'GQCNNSearch', 'NoValidGraspsException', 'NoAntipodalPairsFoundException']
