@@ -525,7 +525,7 @@ class RobustGraspingPolicy(GraspingPolicy):
         """
         # sort grasps
         num_grasps = len(grasps)
-        grasps_and_predictions = zip(np.arange(num_grasps), q_value)
+        grasps_and_predictions = list(zip(np.arange(num_grasps), q_value))
         grasps_and_predictions.sort(key = lambda x : x[1], reverse=True)
 
         # return top grasps
@@ -735,7 +735,7 @@ class CrossEntropyRobustGraspingPolicy(GraspingPolicy):
         num_grasps = len(grasps)
         if num_grasps == 0:
             raise NoValidGraspsException('Zero grasps')
-        grasps_and_predictions = zip(np.arange(num_grasps), q_values)
+        grasps_and_predictions = list(zip(np.arange(num_grasps), q_values))
         grasps_and_predictions.sort(key = lambda x : x[1], reverse=True)
 
         # return top grasps
@@ -847,8 +847,9 @@ class CrossEntropyRobustGraspingPolicy(GraspingPolicy):
             grasps to execute
         """
         # check valid input
-        if not isinstance(state, RgbdImageState):
-            raise ValueError('Must provide an RGB-D image state.')
+        #print(isinstance(state, RgbdImageState))
+        #if not isinstance(state, RgbdImageState):
+        #    raise ValueError('Must provide an RGB-D image state.')
 
         state_output_dir = None
         if self._logging_dir is not None:
@@ -923,7 +924,7 @@ class CrossEntropyRobustGraspingPolicy(GraspingPolicy):
 
             # sort grasps
             resample_start = time()
-            q_values_and_indices = zip(q_values, np.arange(num_grasps))
+            q_values_and_indices = list(zip(q_values, np.arange(num_grasps)))
             q_values_and_indices.sort(key = lambda x : x[0], reverse=True)
 
             if self.config['vis']['grasp_candidates']:
@@ -932,7 +933,7 @@ class CrossEntropyRobustGraspingPolicy(GraspingPolicy):
                 title = 'Sampled Grasps Iter %d' %(j)
                 if self._vis_grasp_affordance_map:
                     self._plot_grasp_affordance_map(state, grasp_affordance_map, grasps=grasps, q_values=norm_q_values, scale=2.0, title=title, save_fname='cem_iter_{}.png'.format(j), save_path=state_output_dir)
-                display_grasps_and_q_values = zip(grasps, q_values)
+                display_grasps_and_q_values = list(zip(grasps, q_values))
                 display_grasps_and_q_values.sort(key = lambda x: x[1])
                 vis.figure(size=(FIGSIZE,FIGSIZE))
                 vis.imshow(rgbd_im.depth,
@@ -1073,7 +1074,7 @@ class CrossEntropyRobustGraspingPolicy(GraspingPolicy):
             title = 'Final Sampled Grasps'
             if self._vis_grasp_affordance_map:
                 self._plot_grasp_affordance_map(state, grasp_affordance_map, grasps=grasps, q_values=norm_q_values, scale=2.0, title=title, save_fname='final_sampled_grasps.png'.format(j), save_path=state_output_dir)
-            display_grasps_and_q_values = zip(grasps, q_values)
+            display_grasps_and_q_values = list(zip(grasps, q_values))
             display_grasps_and_q_values.sort(key = lambda x: x[1])
             vis.figure(size=(FIGSIZE,FIGSIZE))
             vis.imshow(rgbd_im.depth,
@@ -1428,7 +1429,7 @@ class GreedyCompositeGraspingPolicy(CompositeGraspingPolicy):
         """
         # compute all possible actions
         actions = []
-        for name, policy in self.policies.iteritems():
+        for name, policy in self.policies.items():
             if policy_subset is not None and name not in policy_subset:
                 continue
             try:

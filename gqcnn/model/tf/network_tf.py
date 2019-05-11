@@ -1054,7 +1054,7 @@ class GQCNNTF(object):
         output_node = input_node
         prev_layer = "start" # dummy placeholder
         last_index = len(layers.keys()) - 1
-        for layer_index, (layer_name, layer_config) in enumerate(layers.iteritems()):
+        for layer_index, (layer_name, layer_config) in enumerate(layers.items()):
             layer_type = layer_config['type']
             if layer_type == 'conv':
                 if prev_layer == 'fc':
@@ -1085,7 +1085,7 @@ class GQCNNTF(object):
         self._logger.info('Building Pose Stream...')
         output_node = input_node
         prev_layer = "start" # dummy placeholder
-        for layer_name, layer_config in layers.iteritems():
+        for layer_name, layer_config in layers.items():
             layer_type = layer_config['type']
             if layer_type == 'conv':
                raise ValueError('Cannot have conv layer in pose stream')
@@ -1107,13 +1107,13 @@ class GQCNNTF(object):
         self._logger.info('Building Merge Stream...')
         
         # first check if first layer is a merge layer
-        if layers[layers.keys()[0]]['type'] != 'fc_merge':
+        if layers[list(layers.keys())[0]]['type'] != 'fc_merge':
             raise ValueError('First layer in merge stream must be a fc_merge layer!')
             
         prev_layer = "start"
         last_index = len(layers.keys()) - 1
         fan_in = -1
-        for layer_index, (layer_name, layer_config) in enumerate(layers.iteritems()):
+        for layer_index, (layer_name, layer_config) in enumerate(layers.items()):
             layer_type = layer_config['type']
             if layer_type == 'conv':
                raise ValueError('Cannot have conv layer in merge stream!')

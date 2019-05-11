@@ -26,7 +26,7 @@ Author
 ------
 Vishal Satish
 """
-from tf import *
+from .tf import GQCNNTF, FCGQCNNTF
 
 from autolab_core import Logger
  

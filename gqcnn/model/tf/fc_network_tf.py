@@ -30,7 +30,7 @@ import sys
 
 import tensorflow as tf
 
-from network_tf import GQCNNTF
+from .network_tf import GQCNNTF
 from gqcnn.utils import TrainingMode, InputDepthMode
 
 class FCGQCNNTF(GQCNNTF):
