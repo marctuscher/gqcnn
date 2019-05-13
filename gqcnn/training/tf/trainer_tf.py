@@ -620,8 +620,7 @@ class GQCNNTrainerTF(object):
             # update gqcnn
             self.gqcnn.set_im_depth_sub_mean(self.im_depth_sub_mean)
             self.gqcnn.set_im_depth_sub_std(self.im_depth_sub_std)
-
-	elif self.gqcnn.input_depth_mode == InputDepthMode.IM_ONLY:
+        elif self.gqcnn.input_depth_mode == InputDepthMode.IM_ONLY:
             # compute image stats
             im_mean_filename = os.path.join(self.model_dir, 'im_mean.npy')
             im_std_filename = os.path.join(self.model_dir, 'im_std.npy')
