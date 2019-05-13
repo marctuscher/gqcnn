@@ -27,7 +27,7 @@ import argparse
 import collections
 import copy
 import json
-import cPickle as pkl
+import pickle as pkl
 import os
 import random
 import shutil
@@ -37,7 +37,7 @@ import sys
 import threading
 import time
 import multiprocessing as mp
-import Queue
+import queue
 
 import cv2
 import numpy as np
@@ -328,7 +328,7 @@ class GQCNNTrainerTF(object):
             self.train_stats_logger = TrainStatsLogger(self.model_dir)
 
             # loop through training steps
-            training_range = xrange(int(self.num_epochs * self.num_train) // self.train_batch_size)
+            training_range = range(int(self.num_epochs * self.num_train) // self.train_batch_size)
             for step in training_range:
                 # run optimization
                 step_start = time.time()
@@ -749,7 +749,7 @@ class GQCNNTrainerTF(object):
             lowest = np.min(datapoint_indices)
             self.train_index_map[tensor_index].append(i - lowest)
 
-        for i, indices in self.train_index_map.iteritems():
+        for i, indices in self.train_index_map.items():
             self.train_index_map[i] = np.array(indices)
             
         self.val_index_map = {}
@@ -764,7 +764,7 @@ class GQCNNTrainerTF(object):
             lowest = np.min(datapoint_indices)
             self.val_index_map[tensor_index].append(i - lowest)
 
-        for i, indices in self.val_index_map.iteritems():
+        for i, indices in self.val_index_map.items():
             self.val_index_map[i] = np.array(indices)
             
     def _setup_output_dirs(self):
@@ -1250,7 +1250,7 @@ class GQCNNTrainerTF(object):
                         self.prefetch_q.put_nowait((train_images, train_poses, train_labels, train_pred_mask))                       
                     else:
                         self.prefetch_q.put_nowait((train_images, train_poses, train_labels)) 
-                except Queue.Full:
+                except queue.Full:
                     time.sleep(GeneralConstants.QUEUE_SLEEP)
                 queue_stop = time.time()
                 self.logger.debug('Queue batch took %.3f sec' %(queue_stop - queue_start))
