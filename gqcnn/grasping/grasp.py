@@ -25,7 +25,8 @@ Author: Jeff Mahler
 """
 import numpy as np
 
-from autolab_core import Point, RigidTransform
+from autolab_core.point import Point
+from autolab_core import RigidTransform
 from perception import CameraIntrinsics
 
 class Grasp2D(object):
