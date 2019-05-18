@@ -410,7 +410,7 @@ class GQCNNTF(object):
             
         # if using angular bins, make sure output size of final fully connected layer is 2x number of angular bins(because of failure/success probs for each bin)
         if self._angular_bins > 0:
-            assert self._architecture.values()[-1].values()[-1]['out_size'] == 2 * self._angular_bins, 'When predicting angular outputs, output size of final fully connected layer must be 2x number of angular bins'
+            assert list(list(self._architecture.values())[-1].values())[-1]['out_size'] == 2 * self._angular_bins, 'When predicting angular outputs, output size of final fully connected layer must be 2x number of angular bins'
 
         # intermediate network feature handles
         self._feature_tensors = {}

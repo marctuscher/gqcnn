@@ -54,7 +54,7 @@ def get_fields_to_search_over(train_config, prev_keys=[]):
     return fields, anchored_fields
 
 def update_dict(dict1, dict2):
-    for key, val in dict2.iteritems():
+    for key, val in dict2.items():
         if key in dict1:
             dict1[key].extend(val)
         else:
@@ -83,7 +83,7 @@ def parse_master_train_config(train_config):
     hyperparam_search_fields, hyperparam_anchored_search_fields = get_fields_to_search_over(train_config)
 
     # ensure a one-to-one mapping between hyperparameters of fields with matching anchor tags
-    for anchor_tag, fields in hyperparam_anchored_search_fields.iteritems():
+    for anchor_tag, fields in hyperparam_anchored_search_fields.items():
         num_params = []
         for field in fields:
             num_params.append(len(get_nested_key(train_config, field)))

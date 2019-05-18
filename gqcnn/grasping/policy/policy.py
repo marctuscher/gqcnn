@@ -539,7 +539,7 @@ class RobustGraspingPolicy(GraspingPolicy):
             index = grasps_and_predictions[i][0]
             grasp = grasps[index]
             valid = True
-            for filter_name, is_valid in self._filters.iteritems():
+            for filter_name, is_valid in self._filters.items():
                 valid = is_valid(grasp) 
                 self._logger.debug('Grasp {} filter {} valid: {}'.format(i, filter_name, valid))
                 if not valid:
@@ -749,7 +749,7 @@ class CrossEntropyRobustGraspingPolicy(GraspingPolicy):
             index = grasps_and_predictions[i][0]
             grasp = grasps[index]
             valid = True
-            for filter_name, is_valid in self._filters.iteritems():
+            for filter_name, is_valid in self._filters.items():
                 valid = is_valid(grasp) 
                 self._logger.debug('Grasp {} filter {} valid: {}'.format(i, filter_name, valid))
                 if not valid:
@@ -1451,7 +1451,7 @@ class GreedyCompositeGraspingPolicy(CompositeGraspingPolicy):
         """
         actions = []
         q_values = []
-        for name, policy in self.policies.iteritems():
+        for name, policy in self.policies.items():
             if policy_subset is not None and name not in policy_subset:
                 continue
             try:

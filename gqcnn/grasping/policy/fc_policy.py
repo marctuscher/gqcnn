@@ -173,7 +173,7 @@ class FullyConvolutionalGraspingPolicy(GraspingPolicy):
         """Filter actions."""
         for action in actions:
             valid = True
-            for filter_name, is_valid in self._filters.iteritems():
+            for filter_name, is_valid in self._filters.items():
                 if not is_valid(action.grasp):
                     self._logger.info('Grasp {} is not valid with filter {}'.format(action.grasp, filter_name))
                     valid = False

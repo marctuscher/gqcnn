@@ -55,7 +55,7 @@ class FCGQCNNTF(GQCNNTF):
         self._parse_config(fc_config) # we call this again(even though it gets called in the parent constructor on line 42) because the call to the parent _parse_config() on line 43 overwrites our first call
 
         # check that conv layers of GQ-CNN were trained with VALID padding
-        for layer_name, layer_config in self._architecture['im_stream'].iteritems():
+        for layer_name, layer_config in self._architecture['im_stream'].items():
             if layer_config['type'] == 'conv':
                 assert layer_config['pad'] == 'VALID', 'GQ-CNN used for FC-GQ-CNN must have VALID padding for conv layers. Found layer: {} with padding: {}'.format(layer_name, layer_config['pad'])
 
@@ -121,7 +121,9 @@ class FCGQCNNTF(GQCNNTF):
         
         # create new set of weights by reshaping fully connected layer weights
         fcW = self._weights.weights['{}_weights'.format(fc_name)]
-        convW = tf.Variable(tf.reshape(fcW, tf.concat([[filter_dim, filter_dim], [tf.shape(fcW)[0] / (filter_dim * filter_dim)], tf.shape(fcW)[1:]], 0)), name='{}_fully_conv_weights'.format(fc_name))
+        filter_dim = tf.convert_to_tensor(int(filter_dim))
+        a = tf.shape(fcW)[0] / (filter_dim * filter_dim)
+        convW = tf.Variable(tf.reshape(fcW, tf.concat([[filter_dim, filter_dim], [a], tf.shape(fcW)[1:]], 0)), name='{}_fully_conv_weights'.format(fc_name))
         self._weights.weights['{}_fully_conv_weights'.format(fc_name)] = convW
         
         # get bias
@@ -191,7 +193,7 @@ class FCGQCNNTF(GQCNNTF):
         prev_layer = "start" # dummy placeholder
         filter_dim = self._train_im_width
         last_index = len(layers.keys()) - 1
-        for layer_index, (layer_name, layer_config) in enumerate(layers.iteritems()):
+        for layer_index, (layer_name, layer_config) in enumerate(layers.items()):
             layer_type = layer_config['type']
             if layer_type == 'conv':
                 if prev_layer == 'fc':
@@ -228,7 +230,7 @@ class FCGQCNNTF(GQCNNTF):
         last_index = len(layers.keys()) - 1
         filter_dim = 1 # because fully-convolutional layers at this point in the network have a filter_dim of 1
         fan_in = -1
-        for layer_index, (layer_name, layer_config) in enumerate(layers.iteritems()):
+        for layer_index, (layer_name, layer_config) in enumerate(layers.items()):
             layer_type = layer_config['type']
             if layer_type == 'conv':
                raise ValueError('Cannot have conv layer in merge stream!')

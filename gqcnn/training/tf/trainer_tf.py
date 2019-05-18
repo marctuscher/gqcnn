@@ -287,7 +287,7 @@ class GQCNNTrainerTF(object):
         var_list = self.weights.values()
         if finetune:
             var_list = []
-            for weights_name, weights_val in self.weights.iteritems():
+            for weights_name, weights_val in self.weights.items():
                 layer_name = weight_name_to_layer_name(weights_name)
                 if self.optimize_base_layers or layer_name not in self.gqcnn._base_layer_names:
                     var_list.append(weights_val)
