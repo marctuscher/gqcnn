@@ -93,7 +93,7 @@ class FullyConvolutionalGraspingPolicy(GraspingPolicy):
     def _mask_predictions(self, preds, raw_segmask):
         """Mask the given predictions with the given segmask, setting the rest to 0.0."""
         preds_masked = np.zeros_like(preds)
-        raw_segmask_cropped = raw_segmask[self._gqcnn_recep_h / 2:raw_segmask.shape[0] - self._gqcnn_recep_h / 2, self._gqcnn_recep_w / 2:raw_segmask.shape[1] - self._gqcnn_recep_w / 2, 0]
+        raw_segmask_cropped = raw_segmask[int(self._gqcnn_recep_h / 2):int(raw_segmask.shape[0] - self._gqcnn_recep_h / 2), int(self._gqcnn_recep_w / 2):int(raw_segmask.shape[1] - self._gqcnn_recep_w / 2), 0]
         raw_segmask_downsampled = raw_segmask_cropped[::self._gqcnn_stride, ::self._gqcnn_stride]
         if raw_segmask_downsampled.shape[0] != preds.shape[1]:
             raw_segmask_downsampled_new = np.zeros(preds.shape[1:3])
